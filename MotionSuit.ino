@@ -30,54 +30,18 @@
   ===============================================
 */
 
-// I2Cdev and MPU6050 must be installed as libraries, or else the .cpp/.h files
-// for both classes must be in the include path of your project
 #include "I2Cdev.h"
 #include "MPU6050_Wrapper.h"
 #include "TogglePin.h"
 #include "DeathTimer.h"
 
-// Arduino Wire library is required if I2Cdev I2CDEV_ARDUINO_WIRE implementation
-// is used in I2Cdev.h
 #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
 #include "Wire.h"
 #endif
 
 
-
-// uncomment "OUTPUT_READABLE_QUATERNION" if you want to see the actual
-// quaternion components in a [w, x, y, z] format (not best for parsing
-// on a remote host such as Processing or something though)
-#define OUTPUT_READABLE_QUATERNION
-// uncomment "OUTPUT_READABLE_EULER" if you want to see Euler angles
-// (in degrees) calculated from the quaternions coming from the FIFO.
-// Note that Euler angles suffer from gimbal lock (for more info, see
-// http://en.wikipedia.org/wiki/Gimbal_lock)
-//#define OUTPUT_READABLE_EULER
-// uncomment "OUTPUT_READABLE_YAWPITCHROLL" if you want to see the yaw/
-// pitch/roll angles (in degrees) calculated from the quaternions coming
-// from the FIFO. Note this also requires gravity vector calculations.
-// Also note that yaw/pitch/roll angles suffer from gimbal lock (for
-// more info, see: http://en.wikipedia.org/wiki/Gimbal_lock)
-//#define OUTPUT_READABLE_YAWPITCHROLL
-//#define OUTPUT_READABLE_PITCHROLL
-
-// uncomment "OUTPUT_READABLE_REALACCEL" if you want to see acceleration
-// components with gravity removed. This acceleration reference frame is
-// not compensated for orientation, so +X is always +X according to the
-// sensor, just without the effects of gravity. If you want acceleration
-// compensated for orientation, us OUTPUT_READABLE_WORLDACCEL instead.
-//#define OUTPUT_READABLE_REALACCEL
-
-// uncomment "OUTPUT_READABLE_WORLDACCEL" if you want to see acceleration
-// components with gravity removed and adjusted for the world frame of
-// reference (yaw is relative to initial orientation, since no magnetometer
-// is present in this case). Could be quite handy in some cases.
-//#define OUTPUT_READABLE_WORLDACCEL
-
-// uncomment "OUTPUT_TEAPOT" if you want output that matches the
-// format used for the InvenSense teapot demo
-//#define OUTPUT_TEAPOT
+// uncomment to get (more) nicely formatted quaternions on console
+//#define OUTPUT_READABLE_QUATERNION
 
 
 // number of IMUs
@@ -160,11 +124,13 @@ void setup() {
   // crystal solution for the UART timer.
 
   // initialize IMUs
-  Serial.println(F("Initializing IMUs..."));
   for (int i = 0; i < N_IMU; i++) {
+    Serial.print(F("Adding IMU "));
+    Serial.println(i);
     mpus.add(mpu6050_ad0_pins[i]);
   }
 
+  Serial.println(F("Initializing IMUs..."));
   mpus.initialize();
 
   // configure LED
@@ -194,7 +160,7 @@ void setup() {
   Serial.println(F("Initializing DMP..."));
   mpus.dmpInitialize();
 
-  // set gyro offsets
+  // set offsets
   MPU6050_Wrapper *mpu;
   for (int i = 0; i < N_IMU; i++) {
     mpu = mpus.select(i);
@@ -235,10 +201,11 @@ void handleMPUevent(uint8_t mpu) {
 
     // read a packet from FIFO
     currentMPU->getFIFOBytes(fifoBuffer);
+    // get quaternion data from packet
+    currentMPU->_mpu.dmpGetQuaternion(&q, fifoBuffer);
 
 #ifdef OUTPUT_READABLE_QUATERNION
     // display quaternion values in easy matrix form: w x y z
-    currentMPU->_mpu.dmpGetQuaternion(&q, fifoBuffer);
     OUTPUT_SERIAL.print("quat:"); OUTPUT_SERIAL.print(mpu); OUTPUT_SERIAL.print("\t");
     OUTPUT_SERIAL.print(q.w);
     OUTPUT_SERIAL.print("\t");
@@ -247,7 +214,8 @@ void handleMPUevent(uint8_t mpu) {
     OUTPUT_SERIAL.print(q.y);
     OUTPUT_SERIAL.print("\t");
     OUTPUT_SERIAL.println(q.z);
-#else
+#endif
+
     // display quaternion in correct format for MotionSuit script
     Serial.print(q.w, 2);
     Serial.print(",");
@@ -256,8 +224,6 @@ void handleMPUevent(uint8_t mpu) {
     Serial.print(q.y, 2);
     Serial.print(",");
     Serial.println(q.y, 2);
-#endif
-
   }
 }
 
