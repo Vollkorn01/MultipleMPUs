@@ -230,11 +230,21 @@ void handleMPUevent(uint8_t mpu) {
 // ================================================================
 
 void loop() {
+  bool done = true;
   MPU6050_Wrapper *mpu;
   for (int i = 0; i < N_IMU; i++) {
     mpu = mpus.select(i);
-    if (mpu->isDue()) {
+    if (!mpu->isDue()) {
+      done = false;
+      break;
+    }
+  }
+
+  if (done) {
+    // handle MPU events only after each of them is ready
+    for (int i = 0; i < N_IMU; i++) {
       handleMPUevent(i);
+      Serial.println("");
     }
   }
 
