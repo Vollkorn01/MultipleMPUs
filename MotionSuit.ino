@@ -44,23 +44,6 @@
 #endif
 
 
-/* =========================================================================
-  NOTE: In addition to connection 3.3v, GND, SDA, and SCL, this sketch
-  depends on the MPU-6050's INT pin being connected to the Arduino's
-  external interrupt #0 pin. On the Arduino Uno and Mega 2560, this is
-  digital I/O pin 2.
-   ========================================================================= */
-
-/* =========================================================================
-  NOTE: Arduino v1.0.1 with the Leonardo board generates a compile error
-  when using Serial.write(buf, len). The Teapot output uses this method.
-  The solution requires a modification to the Arduino USBAPI.h file, which
-  is fortunately simple, but annoying. This will be fixed in the next IDE
-  release. For more info, see these links:
-
-  http://arduino.cc/forum/index.php/topic,109987.0.html
-  http://code.google.com/p/arduino/issues/detail?id=958
-   ========================================================================= */
 
 // uncomment "OUTPUT_READABLE_QUATERNION" if you want to see the actual
 // quaternion components in a [w, x, y, z] format (not best for parsing
