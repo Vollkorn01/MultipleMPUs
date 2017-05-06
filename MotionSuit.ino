@@ -100,11 +100,10 @@
 #ifdef OUTPUT_TEAPOT
 // Teapot demo can only output from one MPU6050
 const bool useSecondMpu = false;
-MPU6050_Array mpus(1);
 #else
 const bool useSecondMpu = true;
-MPU6050_Array mpus(useSecondMpu ? 2 : 1);
 #endif
+MPU6050_Array mpus(useSecondMpu ? 2 : 1);
 
 #define AD0_PIN_0 11  // Connect this pin to the AD0 pin on MPU #0
 #define AD0_PIN_1 12  // Connect this pin to the AD0 pin on MPU #1
