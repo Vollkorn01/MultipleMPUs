@@ -219,7 +219,8 @@ void handleMPUevent(uint8_t mpu) {
     Serial.print(",");
     Serial.print(q.y, 2);
     Serial.print(",");
-    Serial.println(q.y, 2);
+    Serial.print(q.z, 2);
+    Serial.print(";");
   }
 }
 
