@@ -45,20 +45,16 @@
 
 
 // number of IMUs
-#define N_IMU 4
-//#define N_IMU 9
+#define N_IMU 5
 
 MPU6050_Array mpus(N_IMU);
 
 // MPU-6050 AD0 pins
 static uint8_t mpu6050_ad0_pins[N_IMU] = {
-/*
-  0, 1,
-  9, 10,
-  11, 12, 13,
-*/
+  //0, 1,
   5, 6,
-  11, 12,
+  /*9,*/ 10,
+  11, 12, //13,
 };
 
 // MPU-6050 gyro offsets
