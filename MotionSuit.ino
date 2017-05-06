@@ -121,21 +121,23 @@ void setup() {
 
   // initialize IMUs
   for (int i = 0; i < N_IMU; i++) {
+    /*
     Serial.print(F("Adding IMU "));
     Serial.println(i);
+    */
     mpus.add(mpu6050_ad0_pins[i]);
   }
 
-  Serial.println(F("Initializing IMUs..."));
+  //Serial.println(F("Initializing IMUs..."));
   mpus.initialize();
 
   // configure LED
   pinMode(LED_PIN, OUTPUT);
 
   // verify connection
-  Serial.println(F("Testing IMU connections..."));
+  //Serial.println(F("Testing IMU connections..."));
   if (mpus.testConnection()) {
-    Serial.println(F("MPU6050 connection successful"));
+    //Serial.println(F("MPU6050 connection successful"));
   } else {
     mpus.halt(F("MPU6050 connection failed, halting"));
   }
@@ -153,7 +155,7 @@ void setup() {
   activityLed.setPeriod(500); // slow down led to 2Hz
 
   // initialize DMP
-  Serial.println(F("Initializing DMP..."));
+  //Serial.println(F("Initializing DMP..."));
   mpus.dmpInitialize();
 
   // set offsets
