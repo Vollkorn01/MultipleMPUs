@@ -81,20 +81,33 @@
 
 
 // number of IMUs
-#define N_IMU 9
+#define N_IMU 4
+//#define N_IMU 9
 
 MPU6050_Array mpus(N_IMU);
 
 // MPU-6050 AD0 pins
 static uint8_t mpu6050_ad0_pins[N_IMU] = {
+/*
   0, 1,
-  5, 6,
   9, 10,
   11, 12, 13,
+*/
+  5, 6,
+  11, 12,
 };
 
 // MPU-6050 gyro offsets
-static int8_t mpu6050_gyro_offsets[N_IMU][3] = {0};
+static int8_t mpu6050_gyro_offsets[N_IMU][3] = {
+  0
+  // {220, 76, -85}, (example)
+};
+
+// MPU-6050 accel Z offsets
+static int16_t mpu6050_accel_offsets[N_IMU] = {
+  0
+  // 1788, (example)
+};
 
 
 #define LED_PIN 13
@@ -184,11 +197,11 @@ void setup() {
   // set gyro offsets
   MPU6050_Wrapper *mpu;
   for (int i = 0; i < N_IMU; i++) {
-    mpu = mpus.select(0);
-    mpu->_mpu.setXGyroOffset(220);
-    mpu->_mpu.setYGyroOffset(76);
-    mpu->_mpu.setZGyroOffset(-85);
-    mpu->_mpu.setZAccelOffset(1788);
+    mpu = mpus.select(i);
+    mpu->_mpu.setXGyroOffset(mpu6050_gyro_offsets[i][0]);
+    mpu->_mpu.setYGyroOffset(mpu6050_gyro_offsets[i][1]);
+    mpu->_mpu.setZGyroOffset(mpu6050_gyro_offsets[i][2]);
+    mpu->_mpu.setZAccelOffset(mpu6050_accel_offsets[i]);
   }
 
   for (int i = 0; i < N_IMU; i++) {
