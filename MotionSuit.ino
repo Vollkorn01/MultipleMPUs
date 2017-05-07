@@ -108,7 +108,7 @@ void setup() {
 #endif
 
   // initialize serial communication
-  Serial.begin(115200);
+  Serial.begin(250000);
 
   while (!Serial)
     ; // wait for Leonardo enumeration, others continue immediately
@@ -185,7 +185,7 @@ void handleMPUevent(uint8_t mpu) {
       || currentMPU->_fifoCount >= 1024) {
     // reset so we can continue cleanly
     currentMPU->resetFIFO();
-    Serial.println(F("FIFO overflow!"));
+    //Serial.println(F("FIFO overflow!"));
     return;
   }
 
@@ -246,8 +246,8 @@ void loop() {
     // handle MPU events only after each of them is ready
     for (int i = 0; i < N_IMU; i++) {
       handleMPUevent(i);
-      Serial.println("");
     }
+    Serial.println("");
   }
 
   activityLed.update();

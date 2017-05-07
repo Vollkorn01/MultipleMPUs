@@ -39,11 +39,12 @@ class DeathTimer {
       if ((now - _lastPrintout) > _period) {
         _lastPrintout = now;
         uint32_t time = (now - _startTime)/1000L; // in seconds
-
+        /*
         Serial.print(F("H:")); Serial.print(time / (60*60));
         Serial.print(F("M:")); Serial.print((time / 60) % 60);
         Serial.print(F("S:")); Serial.println(time % 60);
         return true;
+        */
       } 
       return false;
     }

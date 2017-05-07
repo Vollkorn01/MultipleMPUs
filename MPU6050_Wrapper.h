@@ -133,16 +133,16 @@ class MPU6050_Array {
     void initialize() {
       for (int i = 0; i < _fillIndex; i++) {
         select(i);
-        Serial.print(F("Initializing MPU on pin "));
-        Serial.println(_array[i]->_ad0Pin);
+        //Serial.print(F("Initializing MPU on pin "));
+        //Serial.println(_array[i]->_ad0Pin);
         _array[i]->_mpu.initialize();
       }
     }
 
     bool testConnection() {
       for (int i = 0; i < _fillIndex; i++) {
-        Serial.print(F("Testing connection to MPU on pin "));
-        Serial.println(_array[i]->_ad0Pin);
+        //Serial.print(F("Testing connection to MPU on pin "));
+        //Serial.println(_array[i]->_ad0Pin);
         select(i);
         if (!_array[i]->_mpu.testConnection())
           return false;
@@ -161,17 +161,17 @@ class MPU6050_Array {
       MPU6050_Wrapper* currentMPU = select(mpu);
       if (currentMPU->_devStatus == 0) {
         // turn on the DMP, now that it's ready
-        Serial.println(F("Enabling DMP..."));
+        //Serial.println(F("Enabling DMP..."));
         currentMPU->_mpu.setDMPEnabled(true);
         currentMPU->getIntStatus();
 
         // set our DMP Ready flag so the main loop() function knows it's okay to use it
-        Serial.println(F("DMP ready!"));
+        //Serial.println(F("DMP ready!"));
 
         // get expected DMP packet size for later comparison
         currentMPU->dmpGetFIFOPacketSize();
         
-        Serial.print(F("The DMP sample period is ")); Serial.print(MPU6050_DMP_FIFO_PERIOD); Serial.println(F(" ms"));
+        //Serial.print(F("The DMP sample period is ")); Serial.print(MPU6050_DMP_FIFO_PERIOD); Serial.println(F(" ms"));
         currentMPU->_lastUpdate = millis();
         
         if (currentMPU->_devStatus) {
@@ -179,23 +179,23 @@ class MPU6050_Array {
           // 1 = initial memory load failed
           // 2 = DMP configuration updates failed
           // (if it's going to break, usually the code will be 1)
-          Serial.print(F("DMP: ")); Serial.print(mpu);
-          Serial.print(F(" Initialization failed (code "));
-          Serial.print(currentMPU->_devStatus);
+          //Serial.print(F("DMP: ")); Serial.print(mpu);
+          //Serial.print(F(" Initialization failed (code "));
+          //Serial.print(currentMPU->_devStatus);
           halt(F(") Halting.."));
         } else {
           return currentMPU->_devStatus;
         }
       } else {
-        Serial.print(F("MPU6050 error code "));
-        Serial.print(currentMPU->_devStatus);
+        //Serial.print(F("MPU6050 error code "));
+        //Serial.print(currentMPU->_devStatus);
         halt(F(" Halting.."));
       }
     }
     
     void halt(const __FlashStringHelper* errMessage = NULL) {
       if (errMessage)
-        Serial.println(errMessage);
+        //Serial.println(errMessage);
       while (true)
         ;
     }
