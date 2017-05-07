@@ -114,11 +114,15 @@ class MPU6050_Array {
     MPU6050_Wrapper* select(uint8_t device) {
       if (_currentIndex == device)
         return getCurrent();
-      for (int i = 0; i < _fillIndex; i++)
+
+      for (int i = 0; i < _fillIndex; i++) {
         _array[i]->enable(i == device);
+      }
       _currentIndex = device;
+
       // give the IMU some time to realize that the AD0 pin is altered
-      delay(2);
+      delay(1);
+
       return getCurrent();
     }
 
@@ -129,12 +133,16 @@ class MPU6050_Array {
     void initialize() {
       for (int i = 0; i < _fillIndex; i++) {
         select(i);
+        Serial.print(F("Initializing MPU on pin "));
+        Serial.println(_array[i]->_ad0Pin);
         _array[i]->_mpu.initialize();
       }
     }
 
     bool testConnection() {
       for (int i = 0; i < _fillIndex; i++) {
+        Serial.print(F("Testing connection to MPU on pin "));
+        Serial.println(_array[i]->_ad0Pin);
         select(i);
         if (!_array[i]->_mpu.testConnection())
           return false;
