@@ -93,7 +93,7 @@ def updateAngles():
             if start_dt > 10:
                 if 'cal' not in imu:
                     # use current quaternion as calibration zero value
-                    imu['cal'] = q.copy().invert()
+                    imu['cal'] = q.inverted()
                 else:
                     # apply stored calibration offset
                     q = imu['cal'] * q
