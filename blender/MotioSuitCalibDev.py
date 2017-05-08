@@ -47,54 +47,54 @@ newangles = []
 
 
 def updateAngles():
-	global calbool
-	global newangles
+    global calbool
+    global newangles
 
-	s=ser.readline()[:-3].decode('UTF-8') #delete ";\r\n"
-	angles=[x.split(',') for x in s.split(';')]
-	for i in range(len(angles)):
-		angles[i] = [float(x) for x in angles[i]]
-		if calbool is False:
-			#angles[i] = map(operator.sub, angles[i], newangles[i])
-			angles[i] = list(np.array(angles[i]) - np.array(newangles[i]))
+    s=ser.readline()[:-3].decode('UTF-8') #delete ";\r\n"
+    angles=[x.split(',') for x in s.split(';')]
+    for i in range(len(angles)):
+        angles[i] = [float(x) for x in angles[i]]
+        if calbool is False:
+            #angles[i] = map(operator.sub, angles[i], newangles[i])
+            angles[i] = list(np.array(angles[i]) - np.array(newangles[i]))
 
 
-	print(angles[0])
-	#print(time.clock())
-	if time.clock() > 10 and calbool:
-		newangles = angles
-		calbool = False
+    print(angles[0])
+    #print(time.clock())
+    if time.clock() > 10 and calbool:
+        newangles = angles
+        calbool = False
 
-	trunk = mathutils.Quaternion((angles[0][0],angles[0][1],angles[0][2],angles[0][3]))
-	correction = mathutils.Quaternion((1.0, 0.0, 0.0), math.radians(90.0))
-	trunk_out = correction*trunk
+    trunk = mathutils.Quaternion((angles[0][0],angles[0][1],angles[0][2],angles[0][3]))
+    correction = mathutils.Quaternion((1.0, 0.0, 0.0), math.radians(90.0))
+    trunk_out = correction*trunk
 
-	#upperLegR = mathutils.Quaternion((angles[1][0],angles[1][1],angles[1][2],angles[1][3]))
-	#correction = mathutils.Quaternion((1.0, 0.0, 0.0), math.radians(90.0))
-	#upperLegR_out = correction*upperLegR
+    #upperLegR = mathutils.Quaternion((angles[1][0],angles[1][1],angles[1][2],angles[1][3]))
+    #correction = mathutils.Quaternion((1.0, 0.0, 0.0), math.radians(90.0))
+    #upperLegR_out = correction*upperLegR
 
-	#lowerLegR = mathutils.Quaternion((angles[2][0],angles[2][1],angles[2][2],angles[2][3]))
-	#correction = mathutils.Quaternion((1.0, 0.0, 0.0), math.radians(90.0))
-	##correction = mathutils.Quaternion((1.0, 0.0, 0.0), math.radians(90.0))
-	#lowerLegR_out = correction*lowerLegR
+    #lowerLegR = mathutils.Quaternion((angles[2][0],angles[2][1],angles[2][2],angles[2][3]))
+    #correction = mathutils.Quaternion((1.0, 0.0, 0.0), math.radians(90.0))
+    ##correction = mathutils.Quaternion((1.0, 0.0, 0.0), math.radians(90.0))
+    #lowerLegR_out = correction*lowerLegR
 
-	#upperLegL = mathutils.Quaternion((angles[3][0],angles[3][1],angles[3][2],angles[3][3]))
-	#correction = mathutils.Quaternion((1.0, 0.0, 0.0), math.radians(90.0))
-	#upperLegL_out = correction*upperLegL
+    #upperLegL = mathutils.Quaternion((angles[3][0],angles[3][1],angles[3][2],angles[3][3]))
+    #correction = mathutils.Quaternion((1.0, 0.0, 0.0), math.radians(90.0))
+    #upperLegL_out = correction*upperLegL
 
-	#lowerLegL = mathutils.Quaternion((angles[4][0],angles[4][1],angles[4][2],angles[4][3]))
-	#correction = mathutils.Quaternion((1.0, 0.0, 0.0), math.radians(90.0))
-	#lowerLegL_out = correction*lowerLegL
+    #lowerLegL = mathutils.Quaternion((angles[4][0],angles[4][1],angles[4][2],angles[4][3]))
+    #correction = mathutils.Quaternion((1.0, 0.0, 0.0), math.radians(90.0))
+    #lowerLegL_out = correction*lowerLegL
 
-	#ob.channels['armR'].rotation_quaternion = mathutils.Vector([angles[0][0],angles[0][1],angles[0][2],angles[0][3]])
-	#ob.channels['forearmR'].rotation_quaternion = mathutils.Vector([angles[1][0],angles[1][1],angles[1][2],angles[1][3]])
-	#ob.channels['armL'].rotation_quaternion = mathutils.Vector([angles[2][0],angles[2][1],angles[2][2],angles[2][3]])
-	#ob.channels['forearmL'].rotation_quaternion = mathutils.Vector([angles[3][0],angles[3][1],angles[3][2],angles[3][3]])
-	#ob.channels['trunk'].rotation_quaternion = trunk_out
-	#ob.channels['upperLegR'].rotation_quaternion = upperLegR_out
-	#ob.channels['lowerLegR'].rotation_quaternion = lowerLegR_out
-	#ob.channels['upperLegL'].rotation_quaternion = upperLegL_out
-	#ob.channels['lowerLegL'].rotation_quaternion = lowerLegL_out
+    #ob.channels['armR'].rotation_quaternion = mathutils.Vector([angles[0][0],angles[0][1],angles[0][2],angles[0][3]])
+    #ob.channels['forearmR'].rotation_quaternion = mathutils.Vector([angles[1][0],angles[1][1],angles[1][2],angles[1][3]])
+    #ob.channels['armL'].rotation_quaternion = mathutils.Vector([angles[2][0],angles[2][1],angles[2][2],angles[2][3]])
+    #ob.channels['forearmL'].rotation_quaternion = mathutils.Vector([angles[3][0],angles[3][1],angles[3][2],angles[3][3]])
+    #ob.channels['trunk'].rotation_quaternion = trunk_out
+    #ob.channels['upperLegR'].rotation_quaternion = upperLegR_out
+    #ob.channels['lowerLegR'].rotation_quaternion = lowerLegR_out
+    #ob.channels['upperLegL'].rotation_quaternion = upperLegL_out
+    #ob.channels['lowerLegL'].rotation_quaternion = lowerLegL_out
 
-	ob.update()
-	time.sleep(0.001)
+    ob.update()
+    time.sleep(0.001)
