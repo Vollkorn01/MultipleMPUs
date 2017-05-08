@@ -15,7 +15,7 @@ import bge
 import math
 from math import *
 import mathutils
-import time
+import time, timedelta
 
 import sys
 sys.path.append("J:\Programs\Anaconda3\Lib\site-packages")
@@ -40,7 +40,7 @@ main_arm = source.get('Armature')
 ob = bge.logic.getCurrentController().owner
 
 
-# calibration and serial index to channel map
+# IMU serial index to channel mapping
 imus = [
     {
         'channel':  'armR',
@@ -65,19 +65,38 @@ imus = [
     },
 ]
 
+# calibration control
+start = datetime.now()
+calibrate = True
+
 
 def updateAngles():
+    global start
+    global calibrate
+    global imus
+
     # read quaternion update from serial port
     s=ser.readline()[:-3].decode('UTF-8') # remove trailing ";\r\n"
     angles=[x.split(',') for x in s.split(';')]
     for i in range(len(angles)):
         angles[i] = [float(x) for x in angles[i]]
 
-    global imus
+    start_dt = (datetime.now() - start).total_seconds()
+
     for imu in imus:
         # create quaternion from serial output
         a = angles[imu['index']]
         q = mathutils.Quaternion((a[0], a[1], a[2], a[3]))
+
+        # handle calibration
+        if calibrate:
+            if start_dt > 10:
+                if 'cal' not in imu:
+                    # use current quaternion as calibration zero value
+                    imu['cal'] = q.copy().inverse()
+                else:
+                    # apply stored calibration offset
+                    q = imu['cal'] * q
 
         # apply correction if applicable
         if 'corr' in imu:
