@@ -40,46 +40,51 @@ main_arm = source.get('Armature')
 ob = bge.logic.getCurrentController().owner
 
 
-def updateAngles():
-    global calbool
-    global newangles
+# calibration and serial index to channel map
+imus = [
+    {
+        'channel':  'armR',
+        'index':    0,
+    },
+    {
+        'channel':  'forearmR',
+        'index':    1,
+    },
+    {
+        'channel':  'armL',
+        'index':    2,
+    },
+    {
+        'channel':  'forearmL',
+        'index':    3,
+    },
+    {
+        'channel':  'trunk',
+        'index':    3,
+        'corr':     mathutils.Quaternion((1.0, 0.0, 0.0), math.radians(90.0)),
+    },
+]
 
-    s=ser.readline()[:-3].decode('UTF-8') #delete ";\r\n"
+
+def updateAngles():
+    # read quaternion update from serial port
+    s=ser.readline()[:-3].decode('UTF-8') # remove trailing ";\r\n"
     angles=[x.split(',') for x in s.split(';')]
     for i in range(len(angles)):
         angles[i] = [float(x) for x in angles[i]]
 
+    global imus
+    for imu in imus:
+        # create quaternion from serial output
+        a = angles[imu['index']]
+        q = mathutils.Quaternion((a[0], a[1], a[2], a[3]))
 
-    trunk = mathutils.Quaternion((angles[4][0],angles[4][1],angles[4][2],angles[4][3]))
-    correction = mathutils.Quaternion((1.0, 0.0, 0.0), math.radians(90.0))
-    trunk_out = correction*trunk
+        # apply correction if applicable
+        if 'corr' in imu:
+            q = imu['correction'] * q
 
-    #upperLegR = mathutils.Quaternion((angles[1][0],angles[1][1],angles[1][2],angles[1][3]))
-    #correction = mathutils.Quaternion((1.0, 0.0, 0.0), math.radians(90.0))
-    #upperLegR_out = correction*upperLegR
-
-    #lowerLegR = mathutils.Quaternion((angles[2][0],angles[2][1],angles[2][2],angles[2][3]))
-    #correction = mathutils.Quaternion((1.0, 0.0, 0.0), math.radians(90.0))
-    ##correction = mathutils.Quaternion((1.0, 0.0, 0.0), math.radians(90.0))
-    #lowerLegR_out = correction*lowerLegR
-
-    #upperLegL = mathutils.Quaternion((angles[3][0],angles[3][1],angles[3][2],angles[3][3]))
-    #correction = mathutils.Quaternion((1.0, 0.0, 0.0), math.radians(90.0))
-    #upperLegL_out = correction*upperLegL
-
-    #lowerLegL = mathutils.Quaternion((angles[4][0],angles[4][1],angles[4][2],angles[4][3]))
-    #correction = mathutils.Quaternion((1.0, 0.0, 0.0), math.radians(90.0))
-    #lowerLegL_out = correction*lowerLegL
-
-    ob.channels['armR'].rotation_quaternion = mathutils.Vector([angles[0][0],angles[0][1],angles[0][2],angles[0][3]])
-    ob.channels['forearmR'].rotation_quaternion = mathutils.Vector([angles[1][0],angles[1][1],angles[1][2],angles[1][3]])
-    ob.channels['armL'].rotation_quaternion = mathutils.Vector([angles[2][0],angles[2][1],angles[2][2],angles[2][3]])
-    ob.channels['forearmL'].rotation_quaternion = mathutils.Vector([angles[3][0],angles[3][1],angles[3][2],angles[3][3]])
-    ob.channels['trunk'].rotation_quaternion = trunk_out
-    #ob.channels['upperLegR'].rotation_quaternion = upperLegR_out
-    #ob.channels['lowerLegR'].rotation_quaternion = lowerLegR_out
-    #ob.channels['upperLegL'].rotation_quaternion = upperLegL_out
-    #ob.channels['lowerLegL'].rotation_quaternion = lowerLegL_out
+        # set quaternion
+        ob.channels[imu['channel']].rotation_quaternion = q
 
     ob.update()
     time.sleep(0.001)
