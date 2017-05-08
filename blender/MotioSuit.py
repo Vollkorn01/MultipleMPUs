@@ -105,8 +105,7 @@ def updateAngles():
 
         # set quaternion
         ob.channels[imu['channel']].rotation_quaternion = q
-        if imu['channel'] == 'trunk':
-        	print(q)
 
     ob.update()
     time.sleep(0.001)
+
