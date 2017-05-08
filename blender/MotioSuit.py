@@ -61,7 +61,7 @@ imus = [
     {
         'channel':  'trunk',
         'index':    4,
-        'corr':     mathutils.Quaternion((1.0, 0.0, 0.0), math.radians(90.0)),
+        #'corr':     mathutils.Quaternion((1.0, 0.0, 0.0), math.radians(90.0)),
     },
 ]
 
@@ -81,9 +81,6 @@ def updateAngles():
     angles=[x.split(',') for x in s.split(';')]
     for i in range(len(angles)):
         angles[i] = [float(x) for x in angles[i]]
-
-    print('Line:', l)
-    print('Angles:', angles)
 
     start_dt = (datetime.datetime.now() - start).total_seconds()
 
@@ -108,6 +105,8 @@ def updateAngles():
 
         # set quaternion
         ob.channels[imu['channel']].rotation_quaternion = q
+        if imu['channel'] == 'trunk':
+        	print(q)
 
     ob.update()
     time.sleep(0.001)
