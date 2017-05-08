@@ -60,7 +60,7 @@ imus = [
     },
     {
         'channel':  'trunk',
-        'index':    3,
+        'index':    4,
         'corr':     mathutils.Quaternion((1.0, 0.0, 0.0), math.radians(90.0)),
     },
 ]
