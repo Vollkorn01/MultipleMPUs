@@ -32,6 +32,7 @@
 
 #include "I2Cdev.h"
 #include "MPU6050_Wrapper.h"
+#include "SoftwareSerial.h"
 #include "TogglePin.h"
 #include "DeathTimer.h"
 
@@ -71,6 +72,8 @@ static int16_t mpu6050_accel_offsets[N_IMU] = {
 
 
 #define LED_PIN 13
+#define BT_RX   9
+#define BT_TX   13
 
 
 // FIFO buffer
@@ -80,6 +83,7 @@ uint8_t fifoBuffer[64];
 Quaternion q;
 
 
+SoftwareSerial BT(BT_RX, BT_TX);
 TogglePin activityLed(LED_PIN, 100);
 DeathTimer deathTimer(5000L);
 
@@ -100,6 +104,9 @@ void setup() {
   // initialize serial communication
   Serial.begin(250000);
 
+  // initialize BT module serial port
+  BT.begin(9600);
+
   while (!Serial)
     ; // wait for Leonardo enumeration, others continue immediately
 
@@ -118,16 +125,16 @@ void setup() {
     mpus.add(mpu6050_ad0_pins[i]);
   }
 
-  //Serial.println(F("Initializing IMUs..."));
+  Serial.println(F("Initializing IMUs..."));
   mpus.initialize();
 
   // configure LED
   pinMode(LED_PIN, OUTPUT);
 
   // verify connection
-  //Serial.println(F("Testing IMU connections..."));
+  Serial.println(F("Testing IMU connections..."));
   if (mpus.testConnection()) {
-    //Serial.println(F("MPU6050 connection successful"));
+    Serial.println(F("MPU6050 connection successful"));
   } else {
     mpus.halt(F("MPU6050 connection failed, halting"));
   }
@@ -145,7 +152,7 @@ void setup() {
   activityLed.setPeriod(500); // slow down led to 2Hz
 
   // initialize DMP
-  //Serial.println(F("Initializing DMP..."));
+  Serial.println(F("Initializing DMP..."));
   mpus.dmpInitialize();
 
   // set offsets
@@ -175,7 +182,7 @@ void handleMPUevent(uint8_t mpu) {
       || currentMPU->_fifoCount >= 1024) {
     // reset so we can continue cleanly
     currentMPU->resetFIFO();
-    //Serial.println(F("FIFO overflow!"));
+    Serial.println(F("FIFO overflow!"));
     return;
   }
 
@@ -206,15 +213,15 @@ void handleMPUevent(uint8_t mpu) {
     Serial.println(q.z);
 #endif
 
-    // display quaternion in correct format for MotionSuit script
-    Serial.print(q.w, 2);
-    Serial.print(",");
-    Serial.print(q.x, 2);
-    Serial.print(",");
-    Serial.print(q.y, 2);
-    Serial.print(",");
-    Serial.print(q.z, 2);
-    Serial.print(";");
+    // send quaternion data to BT module (in correct format for MotioSuit script)
+    BT.print(q.w, 2);
+    BT.print(",");
+    BT.print(q.x, 2);
+    BT.print(",");
+    BT.print(q.y, 2);
+    BT.print(",");
+    BT.print(q.z, 2);
+    BT.print(";");
   }
 }
 
@@ -239,7 +246,7 @@ void loop() {
     for (int i = 0; i < N_IMU; i++) {
       handleMPUevent(i);
     }
-    Serial.println("");
+    BT.println("");
   }
 
   activityLed.update();
