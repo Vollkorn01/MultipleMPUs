@@ -76,10 +76,14 @@ def updateAngles():
     global imus
 
     # read quaternion update from serial port
-    s=ser.readline()[:-3].decode('UTF-8') # remove trailing ";\r\n"
+    l = ser.readline()
+    s = l[:-3].decode('UTF-8') # remove trailing ";\r\n"
     angles=[x.split(',') for x in s.split(';')]
     for i in range(len(angles)):
         angles[i] = [float(x) for x in angles[i]]
+
+    print('Line:', l)
+    print('Angles:', angles)
 
     start_dt = (datetime.datetime.now() - start).total_seconds()
 
