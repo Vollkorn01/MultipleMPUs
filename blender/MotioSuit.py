@@ -15,7 +15,7 @@ import bge
 import math
 from math import *
 import mathutils
-import time, timedelta
+import time, datetime
 
 import sys
 sys.path.append("J:\Programs\Anaconda3\Lib\site-packages")
@@ -66,7 +66,7 @@ imus = [
 ]
 
 # calibration control
-start = datetime.now()
+start = datetime.datetime.now()
 calibrate = True
 
 
@@ -81,7 +81,7 @@ def updateAngles():
     for i in range(len(angles)):
         angles[i] = [float(x) for x in angles[i]]
 
-    start_dt = (datetime.now() - start).total_seconds()
+    start_dt = (datetime.datetime.now() - start).total_seconds()
 
     for imu in imus:
         # create quaternion from serial output
@@ -93,14 +93,14 @@ def updateAngles():
             if start_dt > 10:
                 if 'cal' not in imu:
                     # use current quaternion as calibration zero value
-                    imu['cal'] = q.copy().inverse()
+                    imu['cal'] = q.copy().invert()
                 else:
                     # apply stored calibration offset
                     q = imu['cal'] * q
 
         # apply correction if applicable
         if 'corr' in imu:
-            q = imu['correction'] * q
+            q = imu['corr'] * q
 
         # set quaternion
         ob.channels[imu['channel']].rotation_quaternion = q
