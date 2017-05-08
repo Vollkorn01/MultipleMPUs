@@ -72,22 +72,12 @@ static int16_t mpu6050_accel_offsets[N_IMU] = {
 
 #define LED_PIN 13
 
-#define OUTPUT_SERIAL Serial
 
+// FIFO buffer
+uint8_t fifoBuffer[64];
 
-uint8_t fifoBuffer[64]; // FIFO storage buffer
-
-// orientation/motion vars
-Quaternion q;        // [w, x, y, z]         quaternion container
-VectorInt16 aa;      // [x, y, z]            accel sensor measurements
-VectorInt16 aaReal;  // [x, y, z]            gravity-free accel sensor measurements
-VectorInt16 aaWorld; // [x, y, z]            world-frame accel sensor measurements
-VectorFloat gravity; // [x, y, z]            gravity vector
-float euler[3];      // [psi, theta, phi]    Euler angle container
-float ypr[3];        // [yaw, pitch, roll]   yaw/pitch/roll container and gravity vector
-
-// packet structure for InvenSense teapot demo
-uint8_t teapotPacket[14] = { '$', 0x02, 0, 0, 0, 0, 0, 0, 0, 0, 0x00, 0x00, '\r', '\n' };
+// quaternion [w, x, y, z]
+Quaternion q;
 
 
 TogglePin activityLed(LED_PIN, 100);
@@ -204,14 +194,16 @@ void handleMPUevent(uint8_t mpu) {
 
 #ifdef OUTPUT_READABLE_QUATERNION
     // display quaternion values in easy matrix form: w x y z
-    OUTPUT_SERIAL.print("quat:"); OUTPUT_SERIAL.print(mpu); OUTPUT_SERIAL.print("\t");
-    OUTPUT_SERIAL.print(q.w);
-    OUTPUT_SERIAL.print("\t");
-    OUTPUT_SERIAL.print(q.x);
-    OUTPUT_SERIAL.print("\t");
-    OUTPUT_SERIAL.print(q.y);
-    OUTPUT_SERIAL.print("\t");
-    OUTPUT_SERIAL.println(q.z);
+    Serial.print("quat:");
+    Serial.print(mpu);
+    Serial.print("\t");
+    Serial.print(q.w);
+    Serial.print("\t");
+    Serial.print(q.x);
+    Serial.print("\t");
+    Serial.print(q.y);
+    Serial.print("\t");
+    Serial.println(q.z);
 #endif
 
     // display quaternion in correct format for MotionSuit script
