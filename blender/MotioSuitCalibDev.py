@@ -4,7 +4,7 @@
 #--------------------------------------------------------------
 #--    BQ
 #--------------------------------------------------------------
-#--    Created by 
+#--    Created by
 #--        Alvaro Ferran (alvaroferran)
 #--------------------------------------------------------------
 #--    Released on January 2016
@@ -19,17 +19,17 @@ import time
 
 import sys
 sys.path.append("J:\Programs\Anaconda3\Lib\site-packages")
+
 import serial
 import glob
 import numpy as np
 
 port="COM6"
 #port=''.join(glob.glob("/dev/ttyUSB*"))
-#port=''.join(glob.glob("/dev/rfcomm"))  
-ser = serial.Serial(port,115200)
+
+ser = serial.Serial(port, 115200, timeout=0.5)
 print("connected to: " + ser.portstr)
 ser.write("a".encode('UTF-8'))
-#Connect the suit first and after a ~second launch the script
 
 
 # Get the whole bge scene
@@ -40,14 +40,16 @@ source = scene.objects
 main_arm = source.get('Armature')
 ob = bge.logic.getCurrentController().owner
 
+
 #define boolean for calibration
 calbool = True
 newangles = []
 
+
 def updateAngles():
 	global calbool
 	global newangles
-	#ser.write("a".encode('UTF-8')) #shifted up, bot dono why
+
 	s=ser.readline()[:-3].decode('UTF-8') #delete ";\r\n"
 	angles=[x.split(',') for x in s.split(';')]
 	for i in range(len(angles)):
@@ -62,6 +64,7 @@ def updateAngles():
 	if time.clock() > 10 and calbool:
 		newangles = angles
 		calbool = False
+
 	trunk = mathutils.Quaternion((angles[0][0],angles[0][1],angles[0][2],angles[0][3]))
 	correction = mathutils.Quaternion((1.0, 0.0, 0.0), math.radians(90.0))
 	trunk_out = correction*trunk
