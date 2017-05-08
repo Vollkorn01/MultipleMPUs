@@ -3,3 +3,9 @@ build/
 # vim swap files
 *.swp
 *.swo
+
+# Arduino FU
+MotionSuit/
+
+# Python cache files
+*.pyc
